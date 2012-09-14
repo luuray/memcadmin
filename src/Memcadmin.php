@@ -2,19 +2,26 @@
 
 class Memcadmin_Application {
 
-	public function __constuct() {
+	private $_config = null;
 
+	public function __construct($configFilename = null) {
 
+		$this->_config = $this->_readConfig($configFilename);
+
+		if ($this->_config)
+			return true;
+
+		return false;
 	}
 
-	public function __desctruct() {
-
-
-	}
+	public function __desctruct() {}
 
 	public function init() {
 
+		if ($this->_config) {
 
+			dump($this->_config);
+		}
 
 		return $this;
 	}
@@ -26,14 +33,12 @@ class Memcadmin_Application {
 		return $this;
 	}
 
-	private function _readConfig($path = null) {
+	private function _readConfig($filename = null) {
 
 		$config = array();
 
-		if ($path) {
-
-
-		}
+		if ($filename)
+			$config = parse_ini_file($filename, true);
 
 		return $config;
 	}

@@ -17,6 +17,10 @@ set_include_path(implode(PATH_SEPARATOR, array(
     get_include_path(),
 )));
 
+function dump($dump) {
+	echo '<pre>'.print_r($dump, true).'</pre>';
+}
+
 require_once 'Memcadmin.php';
 $application = new Memcadmin_Application(APPLICATION_CONFIG_PATH.'/config.ini');
 $application->init()->run();
