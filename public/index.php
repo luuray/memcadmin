@@ -1,5 +1,8 @@
 <?php
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 defined('DOCUMENT_ROOT')
 	|| define('DOCUMENT_ROOT', $_SERVER['DOCUMENT_ROOT']);
 
