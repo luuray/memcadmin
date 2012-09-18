@@ -1,10 +1,22 @@
 <?php
 
+require_once 'Misc.php';
+require_once 'Memcache.php';
+require_once 'Controller.php';
+require_once 'model/Cluster.php';
+require_once 'model/Node.php';
+
 class Memcadmin_Application {
 
 	private $_config = null;
+	private $_structure = null;
+	private $_routeDefault = 'overview';
 
 	public function __construct($configFilename = null) {
+
+		$this->_settings();
+
+		ob_start();
 
 		$this->_config = $this->_readConfig($configFilename);
 
@@ -14,32 +26,151 @@ class Memcadmin_Application {
 		return false;
 	}
 
-	public function __desctruct() {}
+	public function __destruct() {
+
+		ob_end_flush();
+	}
+
+	private function _settings() {
+
+		ini_set('display_errors', 1);
+		error_reporting(E_ALL);
+
+		ini_set("mbstring.language", "Neutral");
+    	ini_set("mbstring.internal_encoding", "UTF-8");
+    	ini_set("mbstring.encoding_translation", "On");
+    	ini_set("mbstring.http_input", "auto");
+    	ini_set("mbstring.http_output", "UTF-8");
+    	ini_set("mbstring.detect_order", "auto");
+    	ini_set("mbstring.substitute_character", "none");
+    	ini_set("default_charset", "UTF-8");
+    	ini_set("mbstring.func_overload", 7);
+
+    	setlocale(LC_TIME, "de_DE.UTF-8");
+    	date_default_timezone_set("Europe/Vienna");
+
+		header("Cache-Control: no-store, no-cache, must-revalidate");
+		header("Cache-Control: post-check=0, pre-check=0", false);
+		header("Pragma: no-cache");
+	}
 
 	public function init() {
 
-		if ($this->_config) {
-
-			dump($this->_config);
-		}
+		if ($this->_config)
+			$this->_create($this->_config);
 
 		return $this;
+	}
+
+	public function route() {
+
+		$rqStr = explode('/', $_SERVER["REQUEST_URI"]);
+		$requestParams = array();
+		$actionParam = null;
+		$called = false;
+
+		if (isset($rqStr[0])) unset($rqStr[0]);
+		if (!empty($rqStr)) {
+			foreach($rqStr as $k => $p) {
+				if ($k == 1)
+					$actionParam = $p;
+				else
+					$requestParams[] = $p;
+			}
+		}
+
+		$controller = new Memcadmin_Controller($requestParams, $this->_structure);
+		
+		if ($actionParam) {
+			$action = 'action'.ucwords(strtolower(trim($actionParam)));
+
+			if(is_callable(array($controller, $action))){
+				$controller
+					->$action()
+					->meld(strtolower(trim($actionParam)));
+				$called = true;
+			}
+		}
+
+		if (!$called) {
+			$action = 'action'.ucwords($this->_routeDefault);			
+			$controller
+				->$action()
+				->meld($this->_routeDefault);
+		}
 	}
 
 	public function run() {
 
+		if ($this->_structure)
+			$this->route();
 
+		$ob_content = ob_get_contents();
+		ob_clean();
+
+		include_once 'view/layout.phtml';
 
 		return $this;
 	}
 
+	private function _create($config) {
+
+		if (is_array($config) && !empty($config)) {
+
+			$this->_structure = array();
+
+			foreach($config as $cluster => $nodes) {
+
+				$clusterModel = new Memcadmin_Model_Cluster($cluster);
+
+				foreach($nodes as $node => $conf) {
+
+					$nodeModel = new Memcadmin_Model_Node($node);
+
+					if (isset($conf['ip']))
+						$nodeModel->setIp($conf['ip']);
+
+					if (isset($conf['port']))
+						$nodeModel->setPort($conf['port']);
+
+					$clusterModel->addNode($nodeModel);
+				}
+
+				$this->_structure[] = $clusterModel;
+			}
+		}
+
+		$this->_structure;
+	}
+
 	private function _readConfig($filename = null) {
 
-		$config = array();
+		$this->_config = array();
 
-		if ($filename)
-			$config = parse_ini_file($filename, true);
+		if ($filename) {
+			$configIn = parse_ini_file($filename, true);
 
-		return $config;
+			if (is_array($configIn) && !empty($configIn)) {
+
+				foreach ($configIn as $name => $conf) {
+
+					list($clusterName, $nodeName) = explode(':', $name);
+
+					$clusterName = trim($clusterName);
+					$nodeName = trim($nodeName);
+
+					if (!isset($this->_config[$clusterName]))
+						$this->_config[$clusterName] = array();
+
+					if ($nodeName == '')
+						$nodeName = $clusterName;
+
+					$this->_config[$clusterName][$nodeName] = $conf;
+
+				}
+			}
+		}
+
+		return $this->_config;
 	}
 }

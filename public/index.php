@@ -1,8 +1,5 @@
 <?php
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 defined('DOCUMENT_ROOT')
 	|| define('DOCUMENT_ROOT', $_SERVER['DOCUMENT_ROOT']);
 
@@ -16,10 +13,6 @@ set_include_path(implode(PATH_SEPARATOR, array(
     realpath(APPLICATION_PATH),
     get_include_path(),
 )));
-
-function dump($dump) {
-	echo '<pre>'.print_r($dump, true).'</pre>';
-}
 
 require_once 'Memcadmin.php';
 $application = new Memcadmin_Application(APPLICATION_CONFIG_PATH.'/config.ini');
