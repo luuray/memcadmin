@@ -1,11 +1,11 @@
 <style>
-.nodeDetailsRow {
+.nodeStatisticsDetailsRow {
 	display: none;
 }
-.btnShowDetails {
+.btnShowStatisticsDetails {
 
 }
-.btnHideDetails {
+.btnHideStatisticsDetails {
 	display: none;
 }
 </style>
@@ -17,18 +17,35 @@
 	<h2>Cluster information</h2>
 
 	<div class="row">
-		<div class="span12 well">
+		<div class="span5 well">
 			<div class="row">
-				<div class="span2">Max Cache Size</div>
-				<div class="span2"><?=$this->_view->cluster['memSize']?></div>
-			</div>
-			<div class="row">
-				<div class="span2">Used Cache Size</div>
-				<div class="span2"><?=$this->_view->cluster['memUsed']?></div>
-			</div>
-			<div class="row">
-				<div class="span2">Availiable Cache Size</div>
-				<div class="span2"><?=$this->_view->cluster['memAvailable']?></div>
+				<div class="span4">
+					<div class="row">
+						<div class="span2">Max Cache Size</div>
+						<div class="span2"><?=$this->_view->cluster['memSize']?></div>
+					</div>
+					<div class="row">
+						<div class="span2">Used Cache Size</div>
+						<div class="span2"><?=$this->_view->cluster['memUsed']?></div>
+					</div>
+					<div class="row">
+						<div class="span2">Availiable Cache Size</div>
+						<div class="span2"><?=$this->_view->cluster['memAvailable']?></div>
+					</div>
+				</div>
+				<div class="span1">
+					<div class="btn-group">
+						<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+							Action
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a href="/cluster/<?=$this->_view->cluster['name']?>?flushall" class="btnFlush"><i class="icon-fire"></i> Flush all nodes</a>
+							</li>
+						</ul>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -88,20 +105,20 @@
 								<span class="caret"></span>
 							</a>
 							<ul class="dropdown-menu">
-								<li class="btnShowDetails node_<?=$node['node_id']?>">
-									<a href="javascript:void(0);" rel="node_<?=$node['node_id']?>">Show details</a>
+								<li class="btnShowStatisticsDetails node_<?=$node['node_id']?>">
+									<a href="javascript:void(0);" rel="node_<?=$node['node_id']?>"><i class="icon-zoom-in"></i> Show statistics details</a>
 								</li>
-								<li class="btnHideDetails node_<?=$node['node_id']?>">
-									<a href="javascript:void(0);" rel="node_<?=$node['node_id']?>">Hide details</a>
+								<li class="btnHideStatisticsDetails node_<?=$node['node_id']?>">
+									<a href="javascript:void(0);" rel="node_<?=$node['node_id']?>"><i class="icon-zoom-out"></i> Hide statistics details</a>
 								</li>
 								<li>
-									<a href="/cluster/<?=$this->_view->cluster['name']?>?flush" class="btnFlush" data-dismiss="alert">Flush server</a>
+									<a href="/cluster/<?=$this->_view->cluster['name']?>?flush" class="btnFlush"><i class="icon-fire"></i> Flush node</a>
 								</li>
 							</ul>
 						</div>
 					</div>
 				</div>
-				<div class="row nodeDetailsRow node_<?=$node['node_id']?>">
+				<div class="row nodeStatisticsDetailsRow node_<?=$node['node_id']?>">
 					<div class="span5">
 						<hr />
 						<div class="row"><div class="span3">Process id of this server process</div><div class="span1"><?=$node['stats']['pid']?></div></div>
@@ -160,19 +177,18 @@
 	<?php if ($i==1): ?></div><? endif; ?>
 <?php endif; ?>
 <script type="text/javascript">
-$.each($("li.btnShowDetails a"), function(i, e) { 
+$.each($("li.btnShowStatisticsDetails a"), function(i, e) { 
 	$(e).click(function() {		
-		$("li.btnShowDetails."+$(this).attr("rel")).hide();
-		$("li.btnHideDetails."+$(this).attr("rel")).show();
-		$("div.nodeDetailsRow."+$(this).attr("rel")).show();
+		$("li.btnShowStatisticsDetails."+$(this).attr("rel")).hide();
+		$("li.btnHideStatisticsDetails."+$(this).attr("rel")).show();
+		$("div.nodeStatisticsDetailsRow."+$(this).attr("rel")).show();
 	});
 });
-$.each($("li.btnHideDetails a"), function(i, e) { 
+$.each($("li.btnHideStatisticsDetails a"), function(i, e) { 
 	$(e).click(function() {		
-		$("li.btnHideDetails."+$(this).attr("rel")).hide();
-		$("li.btnShowDetails."+$(this).attr("rel")).show();
-		$("div.nodeDetailsRow."+$(this).attr("rel")).hide();
+		$("li.btnHideStatisticsDetails."+$(this).attr("rel")).hide();
+		$("li.btnShowStatisticsDetails."+$(this).attr("rel")).show();
+		$("div.nodeStatisticsDetailsRow."+$(this).attr("rel")).hide();
 	});
 });
-$(".alert").alert();
 </script>
