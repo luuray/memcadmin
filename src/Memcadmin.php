@@ -11,6 +11,7 @@ class Memcadmin_Application {
 	private $_config = null;
 	private $_structure = null;
 	private $_routeDefault = 'overview';
+	private $_controller = null;
 
 	public function __construct($configFilename = null) {
 
@@ -49,7 +50,7 @@ class Memcadmin_Application {
     	setlocale(LC_TIME, "de_DE.UTF-8");
     	date_default_timezone_set("Europe/Vienna");
 
-		header("Cache-Control: no-store, no-cache, must-revalidate");
+    	header("Cache-Control: no-store, no-cache, must-revalidate");
 		header("Cache-Control: post-check=0, pre-check=0", false);
 		header("Pragma: no-cache");
 	}
@@ -79,24 +80,24 @@ class Memcadmin_Application {
 			}
 		}
 
-		$controller = new Memcadmin_Controller($requestParams, $this->_structure);
+		$this->_controller = new Memcadmin_Controller($requestParams, $this->_structure);
 		
 		if ($actionParam) {
 			$action = 'action'.ucwords(strtolower(trim($actionParam)));
 
-			if(is_callable(array($controller, $action))){
-				$controller
-					->$action()
-					->meld(strtolower(trim($actionParam)));
+			if(is_callable(array($this->_controller, $action))){
+				$this->_controller->$action();
+				if (!$this->_controller->isPlain())
+					$this->_controller->meld(strtolower(trim($actionParam)));
 				$called = true;
 			}
 		}
 
 		if (!$called) {
 			$action = 'action'.ucwords($this->_routeDefault);			
-			$controller
-				->$action()
-				->meld($this->_routeDefault);
+			$this->_controller->$action();
+			if (!$this->_controller->isPlain())
+				$this->_controller->meld($this->_routeDefault);
 		}
 	}
 
@@ -108,7 +109,8 @@ class Memcadmin_Application {
 		$ob_content = ob_get_contents();
 		ob_clean();
 
-		include_once 'view/layout.phtml';
+		if (!$this->_controller || !$this->_controller->isPlain())
+			include_once 'view/layout.phtml';
 
 		return $this;
 	}

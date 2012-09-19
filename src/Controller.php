@@ -5,6 +5,7 @@ class Memcadmin_Controller {
 	private $_structure = null;
 	private $_view = null;
 	private $_requestParams = array();
+	private $_plain = false;
 
 	public function __construct($requestParams = array(), $structure = null) {
 
@@ -14,6 +15,14 @@ class Memcadmin_Controller {
 
 	public function __destruct() {
 
+	}
+
+	public function isPlain() {
+		return $this->_plain;
+	}
+
+	private function setPlain() {
+		$this->_plain = true;
 	}
 
 	public function actionCluster() {

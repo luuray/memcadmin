@@ -8,7 +8,20 @@
 .btnHideStatisticsDetails {
 	display: none;
 }
+.alertFlashNode {
+	display: none;
+}
+.alertFlashAllNodes {
+	display: none;
+}
 </style>
+
+<div class="alertFlashNode alert alert-success">
+	Flushed node <b></b> successfully.
+</div>
+<div class="alertFlashAllNodes alert alert-success">
+	Flushed <b>all nodes</b> successfully.
+</div>
 
 <?php if (isset($this->_view->cluster)): ?>
 	<h1><?=$this->_view->cluster['name']?></h1>
