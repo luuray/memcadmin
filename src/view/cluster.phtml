@@ -193,7 +193,7 @@
 			});
 		});
 		function flush(rel) {
-			$.get("/flush/<?=$this->_view->cluster['name']?>/"+rel, function(data) {
+			$.get(".?a=flush&c=<?=$this->_view->cluster['name']?>&n="+rel, function(data) {
 				if (data.code && data.code == 'OK') {
 					$("div.alerts").append('<div rel="'+rel+'" class="alertFlashNode alert alert-success">Flushed node <b>'+rel+'</b> successfully.</div>');
 				} else {

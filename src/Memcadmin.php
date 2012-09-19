@@ -67,19 +67,12 @@ class Memcadmin_Application {
 
 		$rqStr = explode('/', $_SERVER["REQUEST_URI"]);
 		$requestParams = array();
-		$actionParam = null;
+		$actionParam = null;		
 		$called = false;
 
-		if (isset($rqStr[0])) unset($rqStr[0]);
-		if (!empty($rqStr)) {
-			foreach($rqStr as $k => $p) {
-				if ($k == 1)
-					$actionParam = $p;
-				else
-					$requestParams[] = $p;
-			}
-		}
-
+		if (isset($_GET['a']))
+			$actionParam = $_GET['a'];
+		
 		$this->_controller = new Memcadmin_Controller($requestParams, $this->_structure);
 		
 		if ($actionParam) {
@@ -110,7 +103,7 @@ class Memcadmin_Application {
 		ob_clean();
 
 		if (!$this->_controller || !$this->_controller->isPlain())
-			include_once 'view/layout.phtml';
+			include_once 'view/_layout.phtml';
 		else
 			echo $ob_content;
 

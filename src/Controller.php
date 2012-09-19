@@ -26,13 +26,23 @@ class Memcadmin_Controller {
 	}
 
 	public function actionFlush() {
-		$this->setPlain();
+		
 		$result = 'ERROR';
-		if (isset($this->_requestParams[0]) && isset($this->_requestParams[1])) {
+		$requestClusterName = null;
+		$requestNodeName = null;
+
+		if (isset($_GET['c']))
+			$requestClusterName = $_GET['c'];
+		if (isset($_GET['n']))
+			$requestNodeName = $_GET['n'];
+
+		$this->setPlain();
+
+		if ($requestClusterName && $requestNodeName) {
 			foreach($this->_structure as $cluster) {
-				if ($cluster->getName() == $this->_requestParams[0]) {
+				if ($cluster->getName() == $requestClusterName) {
 					foreach($cluster->getNodes() as $nodeId => $node) {
-						if ($node->getName() == $this->_requestParams[1]) {
+						if ($node->getName() == $requestNodeName) {
 							$r = Memcadmin_Memcache::flush($node->getIp(), $node->getPort());
 							if ($r == 'OK')
 								$result = 'OK';
@@ -52,10 +62,14 @@ class Memcadmin_Controller {
 
 		$this->_view->clusterName = '';
 		$this->_view->nodes = array();
+		$requestClusterName = null;
 
-		if (isset($this->_requestParams[0])) {
+		if (isset($_GET['c']))
+			$requestClusterName = $_GET['c'];
+
+		if ($requestClusterName) {
 			foreach($this->_structure as $cluster) {
-				if ($cluster->getName() == $this->_requestParams[0]) {
+				if ($cluster->getName() == $requestClusterName) {
 
 					$clusterMemSize = 0;
 					$clusterMemUsed = 0;
