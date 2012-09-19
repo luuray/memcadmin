@@ -25,6 +25,29 @@ class Memcadmin_Controller {
 		$this->_plain = true;
 	}
 
+	public function actionFlush() {
+		$this->setPlain();
+		$result = 'ERROR';
+		if (isset($this->_requestParams[0]) && isset($this->_requestParams[1])) {
+			foreach($this->_structure as $cluster) {
+				if ($cluster->getName() == $this->_requestParams[0]) {
+					foreach($cluster->getNodes() as $nodeId => $node) {
+						if ($node->getName() == $this->_requestParams[1]) {
+							$r = Memcadmin_Memcache::flush($node->getIp(), $node->getPort());
+							if ($r == 'OK')
+								$result = 'OK';
+							break;
+						}
+					}
+					break;
+				}
+			}
+		}
+		
+		header('Content-type: application/json');
+		echo json_encode(array('code' => $result));
+	}
+
 	public function actionCluster() {
 
 		$this->_view->clusterName = '';

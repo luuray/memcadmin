@@ -4,8 +4,8 @@ abstract class Memcadmin_Misc {
 
 	static public function getMicrotimeFloat() {
 
-	    list($usec, $sec) = explode(" ", microtime());
-	    return ((float)$usec + (float)$sec);
+		list($usec, $sec) = explode(" ", microtime());
+		return ((float)$usec + (float)$sec);
 	}
 
 	static public function formatSecAsmSec($sec) {

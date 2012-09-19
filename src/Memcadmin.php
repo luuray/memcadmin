@@ -38,19 +38,19 @@ class Memcadmin_Application {
 		error_reporting(E_ALL);
 
 		ini_set("mbstring.language", "Neutral");
-    	ini_set("mbstring.internal_encoding", "UTF-8");
-    	ini_set("mbstring.encoding_translation", "On");
-    	ini_set("mbstring.http_input", "auto");
-    	ini_set("mbstring.http_output", "UTF-8");
-    	ini_set("mbstring.detect_order", "auto");
-    	ini_set("mbstring.substitute_character", "none");
-    	ini_set("default_charset", "UTF-8");
-    	ini_set("mbstring.func_overload", 7);
+		ini_set("mbstring.internal_encoding", "UTF-8");
+		ini_set("mbstring.encoding_translation", "On");
+		ini_set("mbstring.http_input", "auto");
+		ini_set("mbstring.http_output", "UTF-8");
+		ini_set("mbstring.detect_order", "auto");
+		ini_set("mbstring.substitute_character", "none");
+		ini_set("default_charset", "UTF-8");
+		ini_set("mbstring.func_overload", 7);
 
-    	setlocale(LC_TIME, "de_DE.UTF-8");
-    	date_default_timezone_set("Europe/Vienna");
+		setlocale(LC_TIME, "de_DE.UTF-8");
+		date_default_timezone_set("Europe/Vienna");
 
-    	header("Cache-Control: no-store, no-cache, must-revalidate");
+		header("Cache-Control: no-store, no-cache, must-revalidate");
 		header("Cache-Control: post-check=0, pre-check=0", false);
 		header("Pragma: no-cache");
 	}
@@ -111,6 +111,8 @@ class Memcadmin_Application {
 
 		if (!$this->_controller || !$this->_controller->isPlain())
 			include_once 'view/layout.phtml';
+		else
+			echo $ob_content;
 
 		return $this;
 	}

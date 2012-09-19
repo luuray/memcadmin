@@ -33,47 +33,76 @@ abstract class Memcadmin_Memcache {
 		while ((!feof($s))) {
 			$buf .= fgets($s, 256);
 			if (strpos($buf,"END\r\n")!==false){ // stat says end
-			    break;
+				break;
 			}
 			if (strpos($buf,"DELETED\r\n")!==false || strpos($buf,"NOT_FOUND\r\n")!==false){ // delete says these
-			    break;
+				break;
 			}
 			if (strpos($buf,"OK\r\n")!==false){ // flush_all says ok
-			    break;
+				break;
 			}
 		}
-	    fclose($s);
+		fclose($s);
 
-	    return self::_parseMemcacheResults($buf);
+		return self::_parseMemcacheResults($buf);
 	}
 
 	private static function _parseMemcacheResults($str) {
-	    
+		
 		$res = array();
 		$lines = explode("\r\n",$str);
 		$cnt = count($lines);
 		for($i=0; $i< $cnt; $i++){
-		    $line = $lines[$i];
+			$line = $lines[$i];
 			$l = explode(' ',$line,3);
 			if (count($l)==3){
 				$res[$l[0]][$l[1]]=$l[2];
 				if ($l[0]=='VALUE'){ // next line is the value
-				    $res[$l[0]][$l[1]] = array();
-				    list ($flag,$size)=explode(' ',$l[2]);
-				    $res[$l[0]][$l[1]]['stat']=array('flag'=>$flag,'size'=>$size);
-				    $res[$l[0]][$l[1]]['value']=$lines[++$i];
+					$res[$l[0]][$l[1]] = array();
+					list ($flag,$size)=explode(' ',$l[2]);
+					$res[$l[0]][$l[1]]['stat']=array('flag'=>$flag,'size'=>$size);
+					$res[$l[0]][$l[1]]['value']=$lines[++$i];
 				}
 			}elseif($line=='DELETED' || $line=='NOT_FOUND' || $line=='OK'){
-			    return $line;
+				return $line;
 			}
 		}
 		return $res;
 
 	}
 
+	public static function getCacheItems() {
+	 $items = sendMemcacheCommands('stats items');
+	 $serverItems = array();
+	 $totalItems = array();
+	 foreach ($items as $server=>$itemlist){
+		$serverItems[$server] = array();
+		$totalItems[$server]=0;
+		if (!isset($itemlist['STAT'])){
+			continue;
+		}
+
+		$iteminfo = $itemlist['STAT'];
+
+		foreach($iteminfo as $keyinfo=>$value){
+			if (preg_match('/items\:(\d+?)\:(.+?)$/',$keyinfo,$matches)){
+				$serverItems[$server][$matches[1]][$matches[2]] = $value;
+				if ($matches[2]=='number'){
+					$totalItems[$server] +=$value;
+				}
+			}
+		}
+	 }
+	 return array('items'=>$serverItems,'counts'=>$totalItems);
+	}
+
+	public static function flush($server, $port) {
+		return self::sendCommand($server, $port, 'flush_all');
+	}
+
 /*
 	function sendMemcacheCommands($command){
-	    global $MEMCACHE_SERVERS;
+		global $MEMCACHE_SERVERS;
 		$result = array();
 
 		foreach($MEMCACHE_SERVERS as $server){
@@ -88,42 +117,15 @@ abstract class Memcadmin_Memcache {
 
 
 	function dumpCacheSlab($server,$slabId,$limit){
-	    list($host,$port) = explode(':',$server);
-	    $resp = sendMemcacheCommand($host,$port,'stats cachedump '.$slabId.' '.$limit);
+		list($host,$port) = explode(':',$server);
+		$resp = sendMemcacheCommand($host,$port,'stats cachedump '.$slabId.' '.$limit);
 
 	   return $resp;
 
 	}
 
-	function flushServer($server){
-	    list($host,$port) = explode(':',$server);
-	    $resp = sendMemcacheCommand($host,$port,'flush_all');
-	    return $resp;
-	}
-	function getCacheItems(){
-	 $items = sendMemcacheCommands('stats items');
-	 $serverItems = array();
-	 $totalItems = array();
-	 foreach ($items as $server=>$itemlist){
-	    $serverItems[$server] = array();
-	    $totalItems[$server]=0;
-	    if (!isset($itemlist['STAT'])){
-	        continue;
-	    }
+	
 
-	    $iteminfo = $itemlist['STAT'];
-
-	    foreach($iteminfo as $keyinfo=>$value){
-	        if (preg_match('/items\:(\d+?)\:(.+?)$/',$keyinfo,$matches)){
-	            $serverItems[$server][$matches[1]][$matches[2]] = $value;
-	            if ($matches[2]=='number'){
-	                $totalItems[$server] +=$value;
-	            }
-	        }
-	    }
-	 }
-	 return array('items'=>$serverItems,'counts'=>$totalItems);
-	}
 	function getMemcacheStats($total=true){
 		$resp = sendMemcacheCommands('stats');
 		if ($total){
