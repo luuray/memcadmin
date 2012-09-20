@@ -12,7 +12,7 @@
 		<div class="navbar-inner">
 			<ul class="nav">
 				<li><a href=".?a=slabs&amp;c=<?=$this->_view->clusterName?>&amp;n=<?=$this->_view->nodeName?>">Slabs</a></li>
-				<li<?php if(!$this->_view->requestSlabId): ?> class="active"<?php endif; ?>><a href="#">All items</a></li>
+				<li<?php if(!$this->_view->requestSlabId): ?> class="active"<?php endif; ?>><a href=".?a=items&amp;c=<?=$this->_view->clusterName?>&amp;n=<?=$this->_view->nodeName?>">All items</a></li>
 			</ul>
 		</div>
 	</div>
@@ -22,18 +22,49 @@
 			<tr>
 				<th width="10%">Slab ID</th>
 				<th width="60%">Key</th>
-				<th width="30%">Size</th>
+				<th width="20%">Size</th>
+				<th width="10%"></th>
 			</tr>
 		</thead>
 		<tbody>
 		<?php foreach($this->_view->items as $item): ?>
 			<tr>
 				<td><?=$item['slabId']?></td>
-				<td><?=$item['key']?></td>
+				<td class="columnKey"><?=$item['key']?></td>
 				<td><?=$item['size']?></td>
+				<td class="right">
+					<a rel="<?=$item['key']?>" class="btnShowValue btn btn-small btn-primary" href="javascript:void(0);"><i class="icon-zoom-in icon-white"></i> Show value</a>
+				</td>
 			</tr>
 		<?php endforeach; ?>
 		</tbody>
 	</table>
+
+	<div class="modal hide fade" id="valueModal">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3></h3>
+			</div>
+			<div class="modal-body">
+				<p></p>
+			</div>
+			<div class="modal-footer">
+			<a href="javascript:void(0);" class="btnClose btn">Close</a>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+	$("a.btnShowValue").click(function() {
+		var key = $(this).parent().siblings(".columnKey").html();
+		$("#valueModal h3").html(key);
+		$("#valueModal .btnClose").click(function() {
+			$("#valueModal").modal('hide');
+		});
+		$.get(".?a=value&c=<?=$this->_view->clusterName?>&n=<?=$this->_view->nodeName?>&k="+key, function(data) {
+			$("#valueModal p").html(data);
+		});
+		$("#valueModal").modal('show');
+	});
+	</script>
 
 <?php endif; ?>

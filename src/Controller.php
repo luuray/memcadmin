@@ -58,6 +58,29 @@ class Memcadmin_Controller {
 		return $hdl;			
 	}
 
+	public function actionValue() {
+
+		$this->setPlain();
+		$hdl = $this->_getCurHdl();
+		$cluster = $hdl['cluster'];
+		$node = $hdl['node'];
+		$result = '';
+		$requestKey = null;
+
+		if (isset($_GET['k']))
+			$requestKey = $_GET['k'];
+		
+		if ($node && $requestKey) {
+			$value = Memcadmin_Memcache::getKey($node->getIp(), $node->getPort(), $requestKey);
+			if (isset($value['value'])) {
+				$result = $value['value'];
+			}
+		}
+		
+		header('Content-type: text/plain');
+		echo $result;
+	}
+
 	public function actionItems() {
 
 		$this->_view->items = null;

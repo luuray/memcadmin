@@ -102,6 +102,16 @@ abstract class Memcadmin_Memcache {
 			return array();
 	}
 
+	public static function getKey($server, $port, $key) {
+
+		$r = self::sendCommand($server, $port, 'get '.$key);
+
+		if (isset($r['VALUE'][$key]))
+			return $r['VALUE'][$key];
+		else
+			return null;
+	}
+
 	public static function flush($server, $port) {
 
 		return self::sendCommand($server, $port, 'flush_all');
