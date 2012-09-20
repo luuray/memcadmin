@@ -113,8 +113,11 @@
 										<a href="javascript:void(0);" rel="node_<?=$node['node_id']?>"><i class="icon-zoom-out"></i> Hide statistics details</a>
 									</li>
 									<li>
-										<a href="javascript:void(0);" rel="<?=$node['name']?>" class="btnFlush"><i class="icon-fire"></i> Flush node</a>
+										<a href=".?a=slabs&amp;c=<?=$this->_view->cluster['name']?>&amp;n=<?=$node['name']?>"><i class="icon-list"></i> Show items</a>
 									</li>
+									<li>
+										<a href="javascript:void(0);" rel="<?=$node['name']?>" class="btnFlush"><i class="icon-fire"></i> Flush node</a>
+									</li>									
 								</ul>
 							</div>
 						</div>

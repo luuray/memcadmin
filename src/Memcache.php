@@ -71,29 +71,25 @@ abstract class Memcadmin_Memcache {
 
 	}
 
-	public static function getCacheItems() {
-	 $items = sendMemcacheCommands('stats items');
-	 $serverItems = array();
-	 $totalItems = array();
-	 foreach ($items as $server=>$itemlist){
-		$serverItems[$server] = array();
-		$totalItems[$server]=0;
-		if (!isset($itemlist['STAT'])){
-			continue;
-		}
+	public static function getSlabs($server, $port) {
+		$itemlist = self::sendCommand($server, $port, 'stats items');
+		$serverItems = array();
+		$totalItems = 0;
 
-		$iteminfo = $itemlist['STAT'];
+		if (isset($itemlist['STAT'])) {
+			$iteminfo = $itemlist['STAT'];
 
-		foreach($iteminfo as $keyinfo=>$value){
-			if (preg_match('/items\:(\d+?)\:(.+?)$/',$keyinfo,$matches)){
-				$serverItems[$server][$matches[1]][$matches[2]] = $value;
-				if ($matches[2]=='number'){
-					$totalItems[$server] +=$value;
+			foreach($iteminfo as $keyinfo => $value){
+				if (preg_match('/items\:(\d+?)\:(.+?)$/', $keyinfo,$matches)){
+					$serverItems[$matches[1]][$matches[2]] = $value;
+					if ($matches[2] == 'number'){
+						$totalItems += $value;
+					}
 				}
 			}
 		}
-	 }
-	 return array('items'=>$serverItems,'counts'=>$totalItems);
+
+		return array('items' => $serverItems, 'count' => $totalItems);
 	}
 
 	public static function flush($server, $port) {
@@ -101,20 +97,6 @@ abstract class Memcadmin_Memcache {
 	}
 
 /*
-	function sendMemcacheCommands($command){
-		global $MEMCACHE_SERVERS;
-		$result = array();
-
-		foreach($MEMCACHE_SERVERS as $server){
-			$strs = explode(':',$server);
-			$host = $strs[0];
-			$port = $strs[1];
-			$result[$server] = sendMemcacheCommand($host,$port,$command);
-		}
-		return $result;
-	}
-	
-
 
 	function dumpCacheSlab($server,$slabId,$limit){
 		list($host,$port) = explode(':',$server);
@@ -122,91 +104,6 @@ abstract class Memcadmin_Memcache {
 
 	   return $resp;
 
-	}
-
-	
-
-	function getMemcacheStats($total=true){
-		$resp = sendMemcacheCommands('stats');
-		if ($total){
-			$res = array();
-			foreach($resp as $server=>$r){
-				foreach($r['STAT'] as $key=>$row){
-					if (!isset($res[$key])){
-						$res[$key]=null;
-					}
-					switch ($key){
-						case 'pid':
-							$res['pid'][$server]=$row;
-							break;
-						case 'uptime':
-							$res['uptime'][$server]=$row;
-							break;
-						case 'time':
-							$res['time'][$server]=$row;
-							break;
-						case 'version':
-							$res['version'][$server]=$row;
-							break;
-						case 'pointer_size':
-							$res['pointer_size'][$server]=$row;
-							break;
-						case 'rusage_user':
-							$res['rusage_user'][$server]=$row;
-							break;
-						case 'rusage_system':
-							$res['rusage_system'][$server]=$row;
-							break;
-						case 'curr_items':
-							$res['curr_items']+=$row;
-							break;
-						case 'total_items':
-							$res['total_items']+=$row;
-							break;
-						case 'bytes':
-							$res['bytes']+=$row;
-							break;
-						case 'curr_connections':
-							$res['curr_connections']+=$row;
-							break;
-						case 'total_connections':
-							$res['total_connections']+=$row;
-							break;
-						case 'connection_structures':
-							$res['connection_structures']+=$row;
-							break;
-						case 'cmd_get':
-							$res['cmd_get']+=$row;
-							break;
-						case 'cmd_set':
-							$res['cmd_set']+=$row;
-							break;
-						case 'get_hits':
-							$res['get_hits']+=$row;
-							break;
-						case 'get_misses':
-							$res['get_misses']+=$row;
-							break;
-						case 'evictions':
-							$res['evictions']+=$row;
-							break;
-						case 'bytes_read':
-							$res['bytes_read']+=$row;
-							break;
-						case 'bytes_written':
-							$res['bytes_written']+=$row;
-							break;
-						case 'limit_maxbytes':
-							$res['limit_maxbytes']+=$row;
-							break;
-						case 'threads':
-							$res['rusage_system'][$server]=$row;
-							break;
-					}
-				}
-			}
-			return $res;
-		}
-		return $resp;
 	}*/
+
 }

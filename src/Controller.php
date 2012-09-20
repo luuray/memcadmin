@@ -25,33 +25,75 @@ class Memcadmin_Controller {
 		$this->_plain = true;
 	}
 
-	public function actionFlush() {
-		
-		$result = 'ERROR';
+
+	private function _getCurHdl() {
+
 		$requestClusterName = null;
 		$requestNodeName = null;
+		$hdl = array(
+			'cluster' => null,
+			'node' => null
+		);
 
 		if (isset($_GET['c']))
 			$requestClusterName = $_GET['c'];
 		if (isset($_GET['n']))
 			$requestNodeName = $_GET['n'];
 
-		$this->setPlain();
-
 		if ($requestClusterName && $requestNodeName) {
 			foreach($this->_structure as $cluster) {
 				if ($cluster->getName() == $requestClusterName) {
+					$hdl['cluster'] = $cluster;
 					foreach($cluster->getNodes() as $nodeId => $node) {
 						if ($node->getName() == $requestNodeName) {
-							$r = Memcadmin_Memcache::flush($node->getIp(), $node->getPort());
-							if ($r == 'OK')
-								$result = 'OK';
+							$hdl['node'] = $node;
 							break;
 						}
 					}
 					break;
 				}
 			}
+		}
+
+		return $hdl;			
+	}
+
+	public function actionSlabs() {
+
+		$this->_view->slabs = null;
+		$this->_view->clusterName = '';
+		$this->_view->nodeName = '';
+		$hdl = $this->_getCurHdl();
+		$cluster = $hdl['cluster'];
+		$node = $hdl['node'];
+
+
+
+		if ($node) {
+			$this->_view->clusterName = $cluster->getName();
+			$this->_view->nodeName = $node->getName();
+
+			$this->_view->slabs = Memcadmin_Memcache::getSlabs($node->getIp(), $node->getPort());
+
+			foreach($this->_view->slabs['items'] as $slabId => $slab) {
+				$this->_view->slabs['items'][$slabId]['evicted'] = ($slab['evicted'] == 1) ? 'Yes':'No';
+				$this->_view->slabs['items'][$slabId]['age'] = Memcadmin_Misc::duration(time()-$slab['age']);
+			}
+		}
+	}
+
+	public function actionFlush() {
+		
+		$result = 'ERROR';
+		$this->setPlain();
+		$hdl = $this->_getCurHdl();
+		$cluster = $hdl['cluster'];
+		$node = $hdl['node'];
+		
+		if ($node) {
+			$r = Memcadmin_Memcache::flush($node->getIp(), $node->getPort());
+			if ($r == 'OK')
+				$result = 'OK';
 		}
 		
 		header('Content-type: application/json');
