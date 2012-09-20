@@ -92,18 +92,18 @@ abstract class Memcadmin_Memcache {
 		return array('items' => $serverItems, 'count' => $totalItems);
 	}
 
-	public static function flush($server, $port) {
-		return self::sendCommand($server, $port, 'flush_all');
+	public static function getSlabDump($server, $port, $slabId, $limit = 0) {
+
+		$r = self::sendCommand($server, $port, 'stats cachedump '.$slabId.' '.$limit);
+
+		if (isset($r['ITEM']))
+			return $r['ITEM'];
+		else
+			return array();
 	}
 
-/*
+	public static function flush($server, $port) {
 
-	function dumpCacheSlab($server,$slabId,$limit){
-		list($host,$port) = explode(':',$server);
-		$resp = sendMemcacheCommand($host,$port,'stats cachedump '.$slabId.' '.$limit);
-
-	   return $resp;
-
-	}*/
-
+		return self::sendCommand($server, $port, 'flush_all');
+	}
 }

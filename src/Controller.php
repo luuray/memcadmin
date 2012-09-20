@@ -58,6 +58,53 @@ class Memcadmin_Controller {
 		return $hdl;			
 	}
 
+	public function actionItems() {
+
+		$this->_view->items = null;
+		$this->_view->clusterName = '';
+		$this->_view->nodeName = '';
+		$hdl = $this->_getCurHdl();
+		$cluster = $hdl['cluster'];
+		$node = $hdl['node'];
+		$infoPattern = '/^\[(?P<b>\d+)\s*b\s*;\s*(?P<s>\d+)\s*s\]$/';
+		$this->_view->requestSlabId = null;
+
+		if (isset($_GET['s']))
+			$this->_view->requestSlabId = $_GET['s'];
+
+		if ($node) {
+			$this->_view->clusterName = $cluster->getName();
+			$this->_view->nodeName = $node->getName();
+
+			$slabs = Memcadmin_Memcache::getSlabs($node->getIp(), $node->getPort());
+
+			if (isset($slabs['items'])) {
+				foreach($slabs['items'] as $slabId => $slab) {
+
+					if ($this->_view->requestSlabId === null || $this->_view->requestSlabId == $slabId) {
+
+						$slabdump = Memcadmin_Memcache::getSlabDump($node->getIp(), $node->getPort(), $slabId);
+
+						foreach ($slabdump as $key => $info) {
+
+							$matches = null;
+							preg_match($infoPattern, $info, $matches);
+							$size = '-';
+							if (isset($matches['b']))
+								$size = Memcadmin_Misc::bsize($matches['b']);
+
+							$this->_view->items[] = array(
+								'slabId' => $slabId,
+								'key' => $key,
+								'size' => $size
+							);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public function actionSlabs() {
 
 		$this->_view->slabs = null;
@@ -67,17 +114,17 @@ class Memcadmin_Controller {
 		$cluster = $hdl['cluster'];
 		$node = $hdl['node'];
 
-
-
 		if ($node) {
 			$this->_view->clusterName = $cluster->getName();
 			$this->_view->nodeName = $node->getName();
 
 			$this->_view->slabs = Memcadmin_Memcache::getSlabs($node->getIp(), $node->getPort());
 
-			foreach($this->_view->slabs['items'] as $slabId => $slab) {
-				$this->_view->slabs['items'][$slabId]['evicted'] = ($slab['evicted'] == 1) ? 'Yes':'No';
-				$this->_view->slabs['items'][$slabId]['age'] = Memcadmin_Misc::duration(time()-$slab['age']);
+			if (isset($this->_view->slabs['items'])) {
+				foreach($this->_view->slabs['items'] as $slabId => $slab) {
+					$this->_view->slabs['items'][$slabId]['evicted'] = ($slab['evicted'] == 1) ? 'Yes':'No';
+					$this->_view->slabs['items'][$slabId]['age'] = Memcadmin_Misc::duration(time()-$slab['age']);
+				}
 			}
 		}
 	}
