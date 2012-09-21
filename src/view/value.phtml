@@ -1,0 +1,11 @@
+<h1><?=$this->_view->clusterName?> : <?=$this->_view->nodeName?></h1>
+<h2><?=$this->_view->key?></h2>
+
+<a class="btn btn-small btn-primary" href="javascript:window.history.back();"><i class="icon-arrow-left icon-white"></i> Take me back</a>
+
+<div class="clearfix"></div>
+
+<div style="display:block; margin-top: 20px;">	
+	<iframe style="width: 100%; height: 400px;" src=".?a=valueplain&c=<?=$this->_view->clusterName?>&n=<?=$this->_view->nodeName?>&k=<?=$this->_view->key?>"></iframe>
+</div>
+

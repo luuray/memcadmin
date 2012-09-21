@@ -58,7 +58,7 @@ class Memcadmin_Controller {
 		return $hdl;			
 	}
 
-	public function actionValue() {
+	public function actionValueplain() {
 
 		$this->setPlain();
 		$hdl = $this->_getCurHdl();
@@ -79,6 +79,28 @@ class Memcadmin_Controller {
 		
 		header('Content-type: text/plain');
 		echo $result;
+	}
+
+	public function actionValue() {
+
+		$hdl = $this->_getCurHdl();
+		$cluster = $hdl['cluster'];
+		$node = $hdl['node'];
+		$requestKey = null;
+		$this->_view->clusterName = '';
+		$this->_view->nodeName = '';
+		$this->_view->key = '';
+
+
+		if (isset($_GET['k']))
+			$requestKey = $_GET['k'];
+		
+		if ($node && $requestKey) {
+			$this->_view->clusterName = $cluster->getName();
+			$this->_view->nodeName = $node->getName();
+			$this->_view->key = $requestKey;
+
+		}
 	}
 
 	public function actionItems() {
