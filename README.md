@@ -2,10 +2,6 @@
 
 Web-based Memcached Administration Interface
 
-## Read first
-
--
-
 ## Installation
 
 1. Point your host address to the /public subfolder.
