@@ -58,6 +58,42 @@ class Memcadmin_Controller {
 		return $hdl;			
 	}
 
+	public function actionWildcard() {
+
+		$this->setPlain();
+		$hdl = $this->_getCurHdl();
+		$cluster = $hdl['cluster'];
+		$node = $hdl['node'];
+		$result = array();		
+		$requestKey = null;
+
+		if (isset($_GET['k']))
+			$requestKey = $_GET['k'];
+		
+		if ($node && $requestKey) {
+
+			$slabs = Memcadmin_Memcache::getSlabs($node->getIp(), $node->getPort());
+
+			if (isset($slabs['items'])) {
+				foreach($slabs['items'] as $slabId => $slab) {
+
+					$slabdump = Memcadmin_Memcache::getSlabDump($node->getIp(), $node->getPort(), $slabId);
+
+					foreach ($slabdump as $key => $info) {
+
+						if (strpos(strtolower($key), strtolower($requestKey)) !== false) {
+
+							$result[] = $key;
+						}						
+					}					
+				}
+			}
+		}
+
+		header('Content-type: application/json');
+		echo json_encode($result);
+	}
+
 	public function actionSearch() {
 
 		$hdl = $this->_getCurHdl();
