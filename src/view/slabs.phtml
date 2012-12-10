@@ -6,14 +6,14 @@
 
 <?php if ($this->_view->slabs): ?>
 
-	<h1><?=$this->_view->clusterName?> : <?=$this->_view->nodeName?></h1>
+	<h1><?php echo $this->_view->clusterName?> : <?php echo $this->_view->nodeName; ?></h1>
 
 	<div class="navbar">
 		<div class="navbar-inner">
 			<ul class="nav">
 				<li class="active"><a href="#">Slabs</a></li>
-				<li><a href=".?a=items&amp;c=<?=$this->_view->clusterName?>&amp;n=<?=$this->_view->nodeName?>">All items</a></li>
-				<li><a href=".?a=search&amp;c=<?=$this->_view->clusterName?>&amp;n=<?=$this->_view->nodeName?>">Search</a></li>
+				<li><a href=".?a=items&amp;c=<?php echo $this->_view->clusterName; ?>&amp;n=<?php echo $this->_view->nodeName; ?>">All items</a></li>
+				<li><a href=".?a=search&amp;c=<?php echo $this->_view->clusterName; ?>&amp;n=<?php echo $this->_view->nodeName; ?>">Search</a></li>
 			</ul>
 		</div>
 	</div>
@@ -31,18 +31,18 @@
 		<tbody>
 		<?php foreach($this->_view->slabs['items'] as $slabId => $slab): ?>
 			<tr>
-				<td><?=$slabId?></td>
-				<td><?=$slab['number']?></td>
-				<td><?=$slab['age']?></td>
-				<td><?=$slab['evicted']?></td>
+				<td><?php echo $slabId; ?></td>
+				<td><?php echo $slab['number']; ?></td>
+				<td><?php echo $slab['age']; ?></td>
+				<td><?php echo $slab['evicted']; ?></td>
 				<td class="right">
-					<a class="btn btn-small btn-primary" href=".?a=items&amp;c=<?=$this->_view->clusterName?>&amp;n=<?=$this->_view->nodeName?>&amp;s=<?=$slabId?>"><i class="icon-zoom-in icon-white"></i> Show items</a>
+					<a class="btn btn-small btn-primary" href=".?a=items&amp;c=<?php echo $this->_view->clusterName; ?>&amp;n=<?php echo $this->_view->nodeName; ?>&amp;s=<?php echo $slabId; ?>"><i class="icon-zoom-in icon-white"></i> Show items</a>
 				</td>
 			</tr>
 		<?php endforeach; ?>
 			<tr>
 				<td><b>All</b></td>
-				<td><b><?=$this->_view->slabs['count']?></b></td>
+				<td><b><?php echo $this->_view->slabs['count']; ?></b></td>
 				<td>-</td>
 				<td>-</td>
 				<td></td>

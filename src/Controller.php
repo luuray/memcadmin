@@ -9,6 +9,7 @@ class Memcadmin_Controller {
 
 	public function __construct($requestParams = array(), $structure = null) {
 
+		$this->_view = new stdClass();
 		$this->_structure = $structure;
 		$this->_requestParams = $requestParams;
 	}
@@ -327,7 +328,6 @@ class Memcadmin_Controller {
 	}
 
 	public function meld($view) {
-
 		include_once 'view/'.$view.'.phtml';
 	}
 }

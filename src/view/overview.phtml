@@ -1,5 +1,5 @@
 <?php foreach($this->_view->structure as $cluster => $nodes): ?>
-	<h1><?=$cluster?></h1>
+	<h1><?php echo $cluster; ?></h1>
 	<table class="table table-striped table-condensed">
 		<thead>
 			<tr>
@@ -13,15 +13,17 @@
 	  <tbody>
 		<?php foreach($nodes as $node => $stats): ?>
 			<tr>
-				<td><?=$node?></td>
-				<td class="center"><?=$stats['ip']?></td>
-				<td class="center"><?=$stats['port']?></td>
+				<td><?php echo $node; ?></td>
+				<td class="center"><?php echo $stats['ip']; ?></td>
+				<td class="center"><?php echo $stats['port']; ?></td>
 				<td class="center">
-					<span class="label <?php if ($stats['state'] == 'UP'): ?>label-success<?php else: ?>label-important<? endif; ?>"><?php if ($stats['state'] == 'UP'): ?>UP<?php else: ?>DOWN<? endif; ?></span>
+					<span class="label <?php if ($stats['state'] == 'UP'): ?>label-success<?php else: ?>label-important<?php endif; ?>">
+						<?php if ($stats['state'] == 'UP'): ?>UP<?php else: ?>DOWN<?php endif; ?>
+					</span>
 				</td>
-				<td class="center"><?=$stats['responseTime']?></td>                                 
+				<td class="center"><?php echo $stats['responseTime']; ?></td>
 			</tr>
-		<?php endforeach; ?>                 
+		<?php endforeach; ?>
 	  </tbody>
 	</table>
 <?php endforeach; ?>

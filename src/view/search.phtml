@@ -1,5 +1,5 @@
 <?php if ($this->_view->nodeName): ?>
-	<h1><?=$this->_view->clusterName?> : <?=$this->_view->nodeName?></h1>
+	<h1><?php echo $this->_view->clusterName; ?> : <?php echo $this->_view->nodeName; ?></h1>
 	
 	<h2>Search</h2>
 
@@ -52,11 +52,11 @@
 			type = $("div#searchTypeDrowndown > a span.name").html();
 		if (type == "Exact") {
 			$("div#resultList").hide();
-			$("iframe").attr("src", ".?a=valueplain&c=<?=$this->_view->clusterName?>&n=<?=$this->_view->nodeName?>&k="+key);
+			$("iframe").attr("src", ".?a=valueplain&c=<?php echo $this->_view->clusterName; ?>&n=<?php echo $this->_view->nodeName; ?>&k="+key);
 		}
 		else if (type == "Wildcard") {
 			$("iframe").attr("src", "");
-			$.get(".?a=wildcard&c=<?=$this->_view->clusterName?>&n=<?=$this->_view->nodeName?>&k="+key, function(data) {
+			$.get(".?a=wildcard&c=<?php echo $this->_view->clusterName; ?>&n=<?php echo $this->_view->nodeName; ?>&k="+key, function(data) {
 				if (data) {
 					$("div#resultList").empty();
 					$.each(data, function(i, e) {
@@ -65,7 +65,7 @@
 					$("div#resultList").show();
 				}
 				$("a.exactLink").click(function() {
-					$("iframe").attr("src", ".?a=valueplain&c=<?=$this->_view->clusterName?>&n=<?=$this->_view->nodeName?>&k="+$(this).attr("rel"));
+					$("iframe").attr("src", ".?a=valueplain&c=<?php echo $this->_view->clusterName; ?>&n=<?php echo $this->_view->nodeName; ?>&k="+$(this).attr("rel"));
 				});
 			});
 		}

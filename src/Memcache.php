@@ -4,7 +4,7 @@ abstract class Memcadmin_Memcache {
 
 	static private $_lastResponseTime;
 
-	public function getLastResponseTime() {
+	public static function getLastResponseTime() {
 
 		return self::$_lastResponseTime;
 	}
