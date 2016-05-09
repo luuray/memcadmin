@@ -38,10 +38,10 @@ class Memcadmin_Application {
 		error_reporting(E_ALL);
 
 		ini_set("mbstring.language", "Neutral");
-		ini_set("mbstring.internal_encoding", "UTF-8");
+		@ini_set("mbstring.internal_encoding", "UTF-8");
 		ini_set("mbstring.encoding_translation", "On");
-		ini_set("mbstring.http_input", "auto");
-		ini_set("mbstring.http_output", "UTF-8");
+		@ini_set("mbstring.http_input", "auto");
+		@ini_set("mbstring.http_output", "UTF-8");
 		ini_set("mbstring.detect_order", "auto");
 		ini_set("mbstring.substitute_character", "none");
 		ini_set("default_charset", "UTF-8");
