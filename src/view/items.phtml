@@ -22,8 +22,9 @@
 		<thead>
 			<tr>
 				<th width="10%">Slab ID</th>
-				<th width="60%">Key</th>
-				<th width="20%">Size</th>
+				<th width="50%">Key</th>
+				<th width="10%">Size</th>
+				<th width="20%">Expire</th>
 				<th width="10%"></th>
 			</tr>
 		</thead>
@@ -33,6 +34,7 @@
 				<td><?php echo $item['slabId']; ?></td>
 				<td class="columnKey"><?php echo $item['key']; ?></td>
 				<td><?php echo $item['size']; ?></td>
+				<td><?php echo $item['expire']; ?></td>
 				<td class="right">
 					<a class="btn btn-small btn-primary" href=".?a=value&amp;c=<?php echo $this->_view->clusterName; ?>&amp;n=<?php echo $this->_view->nodeName; ?>&amp;k=<?php echo $item['key']; ?>"><i class="icon-zoom-in icon-white"></i> Show value</a>
 				</td>

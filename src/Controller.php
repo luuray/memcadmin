@@ -185,13 +185,16 @@ class Memcadmin_Controller {
 							$matches = null;
 							preg_match($infoPattern, $info, $matches);
 							$size = '-';
+							$expire = '-';
 							if (isset($matches['b']))
 								$size = Memcadmin_Misc::bsize($matches['b']);
-
+							if (isset($matches['s']))
+								$expire = Memcadmin_Misc::duration($matches['s']);
 							$this->_view->items[] = array(
 								'slabId' => $slabId,
 								'key' => $key,
-								'size' => $size
+								'size' => $size,
+								'expire'=>$expire
 							);
 						}
 					}
