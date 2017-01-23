@@ -47,8 +47,8 @@ class Memcadmin_Application {
 		ini_set("default_charset", "UTF-8");
 		ini_set("mbstring.func_overload", 7);
 
-		setlocale(LC_TIME, "de_DE.UTF-8");
-		date_default_timezone_set("Europe/Vienna");
+		//setlocale(LC_TIME, "en_EN.UTF-8");
+		//date_default_timezone_set("Asia/Shanghai");
 
 		header("Cache-Control: no-store, no-cache, must-revalidate");
 		header("Cache-Control: post-check=0, pre-check=0", false);

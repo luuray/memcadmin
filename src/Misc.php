@@ -47,4 +47,24 @@ abstract class Memcadmin_Misc {
 		else $str .= " $mins minutes";
 		return $str;
 	}
+
+	static public function lifetime($ts)
+	{
+		$lifetime = $ts-time();
+		$flag = 1;
+		if($lifetime<0){
+			$flag = -1;
+			$lifetime = $lifetime * -1;
+		}
+
+		$day = intval($lifetime/86400.0);
+		$day = $day>0?$day:0;
+		$hour = intval(($lifetime-$day*86400)/3600);
+		$hour = $hour>0?$hour:0;
+		$min = intval(($lifetime-$day*86400-$hour*3600)/60.0);
+		$min=$min>0?$min:0;
+		$sec = $lifetime-$day*86400-$hour*3600-$min*60;
+
+		return sprintf('%s %d d, %d h, %d m, %d s', $flag>0?'':'exp', $day, $hour, $min, $sec);
+	}
 }
