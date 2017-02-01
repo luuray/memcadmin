@@ -76,11 +76,11 @@
 							</div>
 							<div class="row">
 								<div class="span2">Start Time</div>
-								<div class="span2"><?php echo $node['startTime']; ?></div>
+								<div class="span2"><?php echo date('Y-m-d H:i:s', $node['startTime']); ?></div>
 							</div>
 							<div class="row">
 								<div class="span2">Uptime</div>
-								<div class="span2"><?php echo $node['upTime']; ?></div>
+								<div class="span2"><?php echo Memcadmin_Misc::duration($node['upTime']); ?></div>
 							</div>
 							<div class="row">
 								<div class="span2">Server Version</div>
